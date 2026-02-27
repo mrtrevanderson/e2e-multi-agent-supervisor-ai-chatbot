@@ -49,6 +49,7 @@ import {
   type ChatMessage,
   checkChatAccess,
   convertToUIMessages,
+  normalizeUIMessage,
   generateUUID,
   myProvider,
   postRequestBodySchema,
@@ -227,7 +228,7 @@ chatRouter.post('/', requireAuth, async (req: Request, res: Response) => {
     const model = await myProvider.languageModel(selectedChatModel);
     const result = streamText({
       model,
-      messages: await convertToModelMessages(uiMessages),
+      messages: await convertToModelMessages(uiMessages.map(normalizeUIMessage)),
       headers: {
         [CONTEXT_HEADER_CONVERSATION_ID]: id,
         [CONTEXT_HEADER_USER_ID]: session.user.email ?? session.user.id,
