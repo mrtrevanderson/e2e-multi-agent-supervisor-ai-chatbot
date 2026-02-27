@@ -4,7 +4,7 @@ bundle:
 variables:
   serving_endpoint_name:
     description: "Name of the model serving endpoint to be used by the app"
-    default: "mas-eff8ecc0-endpoint"
+    default: "mas-05f2890c-endpoint"
   database_instance_name:
     description: "Base name of the Lakebase database instance"
     default: "chatbot-lakebase"
