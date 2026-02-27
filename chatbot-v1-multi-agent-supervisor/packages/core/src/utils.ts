@@ -16,11 +16,25 @@ export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {
     id: message.id,
     role: message.role as 'user' | 'assistant' | 'system',
     parts: (message.parts as any[]).map((part) => {
-      // Normalize tool call parts: ensure `id` is set (required by convertToModelMessages).
-      // The AI SDK stores tool calls with `toolCallId` which maps to `call_id` on the wire.
-      // When loaded from DB, the `id` field may be missing — copy it from `toolCallId`.
-      if (part.type === 'dynamic-tool' && !part.id && part.toolCallId) {
-        return { ...part, id: part.toolCallId };
+      // Normalize tool call parts loaded from DB.
+      // The @databricks/ai-sdk-provider reads callProviderMetadata.databricks.itemId
+      // to populate the `id` field on function_call output items. When parts are
+      // persisted and reloaded, this metadata is missing — use toolCallId as fallback.
+      if (part.type === 'dynamic-tool' && part.toolCallId) {
+        const hasItemId = part.callProviderMetadata?.databricks?.itemId;
+        if (!hasItemId) {
+          return {
+            ...part,
+            id: part.id ?? part.toolCallId,
+            callProviderMetadata: {
+              ...part.callProviderMetadata,
+              databricks: {
+                ...part.callProviderMetadata?.databricks,
+                itemId: part.toolCallId,
+              },
+            },
+          };
+        }
       }
       return part;
     }) as UIMessagePart<CustomUIDataTypes, ChatTools>[],
