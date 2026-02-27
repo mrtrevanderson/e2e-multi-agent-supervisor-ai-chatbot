@@ -15,7 +15,15 @@ export function convertToUIMessages(messages: DBMessage[]): ChatMessage[] {
   return messages.map((message) => ({
     id: message.id,
     role: message.role as 'user' | 'assistant' | 'system',
-    parts: message.parts as UIMessagePart<CustomUIDataTypes, ChatTools>[],
+    parts: (message.parts as any[]).map((part) => {
+      // Normalize tool call parts: ensure `id` is set (required by convertToModelMessages).
+      // The AI SDK stores tool calls with `toolCallId` which maps to `call_id` on the wire.
+      // When loaded from DB, the `id` field may be missing — copy it from `toolCallId`.
+      if (part.type === 'dynamic-tool' && !part.id && part.toolCallId) {
+        return { ...part, id: part.toolCallId };
+      }
+      return part;
+    }) as UIMessagePart<CustomUIDataTypes, ChatTools>[],
     metadata: {
       createdAt: formatISO(message.createdAt),
     },
