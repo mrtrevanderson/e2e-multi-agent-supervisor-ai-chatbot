@@ -7,6 +7,7 @@ import express, {
   type NextFunction,
   type Express,
 } from 'express';
+import http from 'node:http';
 import cors from 'cors';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -155,7 +156,15 @@ async function startServer() {
     }
   }
 
-  app.listen(PORT, () => {
+  // Use http.createServer so we can disable timeouts for long-running MAS inference.
+  // The Databricks MAS endpoint can take up to 290 s; without this, Node.js / the
+  // Databricks Apps reverse proxy may kill the SSE connection before the response
+  // streams back to the client.
+  const server = http.createServer(app);
+  server.timeout = 0;         // disable socket inactivity timeout
+  server.requestTimeout = 0;  // disable per-request timeout
+  server.headersTimeout = 0;  // disable headers timeout (default 60 s)
+  server.listen(PORT, () => {
     console.log(`Backend server is running on http://localhost:${PORT}`);
     console.log(`Environment: ${isDevelopment ? 'development' : 'production'}`);
   });

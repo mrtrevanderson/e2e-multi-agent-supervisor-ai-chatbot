@@ -307,6 +307,23 @@ chatRouter.post('/', requireAuth, async (req: Request, res: Response) => {
         });
       },
     });
+
+    // Keep the SSE connection alive during long MAS inference.
+    // Intermediate proxies (Databricks Apps LB, browsers) close idle SSE connections;
+    // periodic SSE comment events (ignored by the AI SDK client) prevent this.
+    const heartbeatTimer = setInterval(() => {
+      if (res.writableEnded) {
+        clearInterval(heartbeatTimer);
+        return;
+      }
+      try {
+        res.write(': ping\n\n');
+      } catch (_) {
+        clearInterval(heartbeatTimer);
+      }
+    }, 20_000); // every 20 seconds
+    res.on('close', () => clearInterval(heartbeatTimer));
+    res.on('finish', () => clearInterval(heartbeatTimer));
   } catch (error) {
     if (error instanceof ChatSDKError) {
       const response = error.toResponse();
