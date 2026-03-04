@@ -1,6 +1,6 @@
-# Innocean USA — Databricks E2E Chatbot Projects
+# Nexus
 
-A collection of end-to-end chatbot applications built on Databricks Agent Serving, Express.js, and React. Each project folder is a standalone, deployable chatbot variant targeting different agent configurations.
+Nexus is a collection of end-to-end chatbot applications built on Databricks Agent Serving, Express.js, and React. Each project folder is a standalone, deployable chatbot variant targeting different agent configurations.
 
 ---
 
@@ -8,7 +8,7 @@ A collection of end-to-end chatbot applications built on Databricks Agent Servin
 
 | Folder | Description | Endpoint |
 |--------|-------------|----------|
-| [`chatbot-v1-multi-agent-supervisor`](./chatbot-v1-multi-agent-supervisor) | Multi-agent supervisor chatbot with Lakebase persistent chat history | `mas-eff8ecc0-endpoint` |
+| [`chatbot-v1-multi-agent-supervisor`](./chatbot-v1-multi-agent-supervisor) | Nexus multi-agent supervisor chatbot with Lakebase persistent chat history | `mas-eff8ecc0-endpoint` |
 
 ---
 

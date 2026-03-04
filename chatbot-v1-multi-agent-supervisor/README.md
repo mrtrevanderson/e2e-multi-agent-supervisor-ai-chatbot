@@ -1,9 +1,9 @@
 <a href="https://docs.databricks.com/aws/en/generative-ai/agent-framework/chat-app">
-  <h1 align="center">Databricks Agent Chat Template</h1>
+  <h1 align="center">Nexus</h1>
 </a>
 
 <p align="center">
-    A chat application template for interacting with Databricks Agent Serving endpoints, built with ExpressJS, React, Vercel AI SDK, Databricks authentication, and optional Lakebase (database) integration.
+    Nexus is a chat application for interacting with Databricks Agent Serving endpoints, built with ExpressJS, React, Vercel AI SDK, Databricks authentication, and optional Lakebase (database) integration.
 </p>
 
 <p align="center">
