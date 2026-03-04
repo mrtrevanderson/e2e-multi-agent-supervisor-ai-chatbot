@@ -16,6 +16,18 @@
 This template provides a fully functional chat app for custom code agents and Agent Bricks deployed on Databricks,
 but has some [known limitations](#known-limitations) for other use cases. Work is in progress on addressing these limitations.
 
+## Version
+
+This is **v2 — Simplified Output**. Compared to v1 (`chatbot-v1-multi-agent-supervisor`), this version hides intermediate agent tool calls from the UI. Instead of showing tool status badges, inputs, and outputs while the supervisor agent works, users see a pulsing animated icon with a "Working…" indicator. Only the final text response is displayed. MCP tool approval prompts are still shown when user confirmation is required.
+
+| | v1 (multi-agent-supervisor) | v2 (simplified-output) |
+|---|---|---|
+| Tool call status badges | Visible | Hidden |
+| Tool inputs / outputs | Visible | Hidden |
+| Loading animation during tool calls | No | Yes (pulsing gradient icon) |
+| MCP approval prompts | Visible | Visible |
+| Final text response | Visible | Visible |
+
 ## Features
 
 - **Databricks Agent and Foundation Model Integration**: Direct connection to Databricks Agent serving endpoints and Agent Bricks
