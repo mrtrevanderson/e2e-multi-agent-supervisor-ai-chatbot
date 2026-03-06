@@ -42,13 +42,13 @@ jobs:
           # Start the app if stopped; suppress error if already running
           databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
 
-          # Wait up to 5 minutes for compute to become ACTIVE
-          echo "Waiting for app to reach ACTIVE state..."
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
           for i in $(seq 1 30); do
-            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.compute_status.state // "UNKNOWN"')
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
             echo "  [$i/30] state=$STATE"
-            [ "$STATE" = "ACTIVE" ] && break
-            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for ACTIVE state."; exit 1; }
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
             sleep 10
           done
 
@@ -87,13 +87,13 @@ jobs:
           # Start the app if stopped; suppress error if already running
           databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
 
-          # Wait up to 5 minutes for compute to become ACTIVE
-          echo "Waiting for app to reach ACTIVE state..."
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
           for i in $(seq 1 30); do
-            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.compute_status.state // "UNKNOWN"')
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
             echo "  [$i/30] state=$STATE"
-            [ "$STATE" = "ACTIVE" ] && break
-            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for ACTIVE state."; exit 1; }
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
             sleep 10
           done
 
@@ -135,13 +135,13 @@ jobs:
           # Start the app if stopped; suppress error if already running
           databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
 
-          # Wait up to 5 minutes for compute to become ACTIVE
-          echo "Waiting for app to reach ACTIVE state..."
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
           for i in $(seq 1 30); do
-            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.compute_status.state // "UNKNOWN"')
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
             echo "  [$i/30] state=$STATE"
-            [ "$STATE" = "ACTIVE" ] && break
-            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for ACTIVE state."; exit 1; }
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
             sleep 10
           done
 
@@ -183,13 +183,13 @@ jobs:
           # Start the app if stopped; suppress error if already running
           databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
 
-          # Wait up to 5 minutes for compute to become ACTIVE
-          echo "Waiting for app to reach ACTIVE state..."
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
           for i in $(seq 1 30); do
-            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.compute_status.state // "UNKNOWN"')
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
             echo "  [$i/30] state=$STATE"
-            [ "$STATE" = "ACTIVE" ] && break
-            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for ACTIVE state."; exit 1; }
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
             sleep 10
           done
 
