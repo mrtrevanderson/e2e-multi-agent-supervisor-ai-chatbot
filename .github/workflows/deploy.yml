@@ -33,7 +33,12 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Start app
-        run: databricks bundle run databricks_chatbot --target dev
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot/dev/files"
+          APP_NAME=$(databricks bundle validate --target dev --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "Deploying app: $APP_NAME from $SOURCE_PATH"
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -58,7 +63,12 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Start app
-        run: databricks bundle run databricks_chatbot --target dev
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot-v2/dev/files"
+          APP_NAME=$(databricks bundle validate --target dev --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "Deploying app: $APP_NAME from $SOURCE_PATH"
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -86,7 +96,12 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Start app
-        run: databricks bundle run databricks_chatbot --target prod
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot/prod/files"
+          APP_NAME=$(databricks bundle validate --target prod --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "Deploying app: $APP_NAME from $SOURCE_PATH"
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
@@ -114,7 +129,12 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
       - name: Start app
-        run: databricks bundle run databricks_chatbot --target prod
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot-v2/prod/files"
+          APP_NAME=$(databricks bundle validate --target prod --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "Deploying app: $APP_NAME from $SOURCE_PATH"
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
