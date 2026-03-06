@@ -5,8 +5,13 @@ variables:
   serving_endpoint_name:
     description: "Name of the model serving endpoint to be used by the app"
     default: "mas-05f2890c-endpoint"
+  database_instance_name:
+    description: "Base name of the Lakebase database instance (shared with v1)"
+    default: "chatbot-lakebase"
   resource_name_suffix:
     description: "Suffix for resource names (app names etc). Helpful for avoiding name collisions if multiple users deploy this app to the same workspace"
+  v1_resource_name_suffix:
+    description: "Resource name suffix used by v1, so v2 can reference the same Lakebase instance"
 
 resources:
   apps:
@@ -21,6 +26,12 @@ resources:
           serving_endpoint:
             name: ${var.serving_endpoint_name}
             permission: CAN_QUERY
+        - name: database
+          description: "Shared Lakebase database instance (managed by v1)"
+          database:
+            database_name: databricks_postgres
+            instance_name: ${var.database_instance_name}-${var.v1_resource_name_suffix}
+            permission: CAN_CONNECT_AND_CREATE
 
 targets:
   dev:
@@ -28,13 +39,16 @@ targets:
     default: true
     variables:
       resource_name_suffix: dev-v2-${workspace.current_user.domain_friendly_name}
+      v1_resource_name_suffix: dev-${workspace.current_user.domain_friendly_name}
 
   staging:
     mode: production
     variables:
       resource_name_suffix: "v2-staging"
+      v1_resource_name_suffix: "staging"
 
   prod:
     mode: production
     variables:
       resource_name_suffix: "v2-prod"
+      v1_resource_name_suffix: "prod"
