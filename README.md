@@ -9,6 +9,7 @@ A collection of end-to-end chatbot applications built on Databricks Agent Servin
 | Folder | Description | Endpoint |
 |--------|-------------|----------|
 | [`chatbot-v1-multi-agent-supervisor`](./chatbot-v1-multi-agent-supervisor) | Multi-agent supervisor chatbot with Lakebase persistent chat history | `mas-eff8ecc0-endpoint` |
+| [`chatbot-v2-simplified-output`](./chatbot-v2-simplified-output) | Same multi-agent supervisor, but hides intermediate tool calls — shows a loading animation while the agent works and displays only the final response | `mas-05f2890c-endpoint` |
 
 ---
 
