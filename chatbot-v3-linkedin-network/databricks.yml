@@ -7,7 +7,7 @@ variables:
     default: "mas-3979b485-endpoint"
   database_instance_name:
     description: "Base name of the Lakebase database instance"
-    default: "chatbot-lakebase"
+    default: "chatbot-lakebase-v3"
   resource_name_suffix:
     description: "Suffix for resource names (app/lakebase instance names etc). Helpful for avoiding name collisions if multiple users deploy this app to the same workspace"
 
