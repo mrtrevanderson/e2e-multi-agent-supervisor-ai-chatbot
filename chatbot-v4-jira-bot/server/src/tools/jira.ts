@@ -3,8 +3,7 @@
  * Ported from jira-bot and converted to Vercel AI SDK tool() format.
  */
 
-import { tool } from 'ai';
-import { z } from 'zod';
+import { tool, jsonSchema } from 'ai';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -75,24 +74,31 @@ export function createJiraTools(userEmail: string) {
   return {
     create_jira_ticket: tool({
       description: 'Create a new Jira ticket in the DEHGMA project',
-      parameters: z.object({
-        summary: z.string().describe('Ticket summary/title'),
-        description: z
-          .string()
-          .describe('Detailed description as an ADF JSON string'),
-        issue_type: z
-          .enum(['Task', 'Bug', 'Story', 'Epic'])
-          .optional()
-          .default('Task')
-          .describe('Type of issue'),
-        priority: z
-          .enum(['Highest', 'High', 'Medium', 'Low', 'Lowest'])
-          .optional()
-          .describe('Priority level'),
-        due_date: z
-          .string()
-          .optional()
-          .describe('Due date in YYYY-MM-DD format, or omit if no deadline'),
+      parameters: jsonSchema<{
+        summary: string;
+        description: string;
+        issue_type?: 'Task' | 'Bug' | 'Story' | 'Epic';
+        priority?: 'Highest' | 'High' | 'Medium' | 'Low' | 'Lowest';
+        due_date?: string;
+      }>({
+        type: 'object',
+        properties: {
+          summary: { type: 'string', description: 'Ticket summary/title' },
+          description: { type: 'string', description: 'Detailed description as an ADF JSON string' },
+          issue_type: {
+            type: 'string',
+            enum: ['Task', 'Bug', 'Story', 'Epic'],
+            default: 'Task',
+            description: 'Type of issue',
+          },
+          priority: {
+            type: 'string',
+            enum: ['Highest', 'High', 'Medium', 'Low', 'Lowest'],
+            description: 'Priority level',
+          },
+          due_date: { type: 'string', description: 'Due date in YYYY-MM-DD format, or omit if no deadline' },
+        },
+        required: ['summary', 'description'],
       }),
       execute: async ({ summary, description, issue_type, priority, due_date }) => {
         try {
@@ -166,8 +172,12 @@ export function createJiraTools(userEmail: string) {
 
     get_jira_ticket: tool({
       description: 'Get details of a specific Jira ticket by key (e.g. DEHGMA-123)',
-      parameters: z.object({
-        ticket_key: z.string().describe('The Jira ticket key, e.g. DEHGMA-123'),
+      parameters: jsonSchema<{ ticket_key: string }>({
+        type: 'object',
+        properties: {
+          ticket_key: { type: 'string', description: 'The Jira ticket key, e.g. DEHGMA-123' },
+        },
+        required: ['ticket_key'],
       }),
       execute: async ({ ticket_key }) => {
         try {
@@ -194,13 +204,13 @@ export function createJiraTools(userEmail: string) {
 
     search_jira_issues: tool({
       description: 'Search for Jira issues using text search in the DEHGMA project',
-      parameters: z.object({
-        query: z.string().describe('Text to search for'),
-        max_results: z
-          .number()
-          .optional()
-          .default(10)
-          .describe('Maximum results to return (default 10)'),
+      parameters: jsonSchema<{ query: string; max_results?: number }>({
+        type: 'object',
+        properties: {
+          query: { type: 'string', description: 'Text to search for' },
+          max_results: { type: 'number', default: 10, description: 'Maximum results to return (default 10)' },
+        },
+        required: ['query'],
       }),
       execute: async ({ query, max_results }) => {
         try {
@@ -231,9 +241,13 @@ export function createJiraTools(userEmail: string) {
     update_jira_ticket: tool({
       description:
         'Add a comment to an existing Jira ticket. Use this whenever the user wants to update, comment on, or add information to a ticket.',
-      parameters: z.object({
-        ticket_key: z.string().describe('The Jira ticket key e.g. DEHGMA-123'),
-        comment: z.string().describe('The comment text to add to the ticket'),
+      parameters: jsonSchema<{ ticket_key: string; comment: string }>({
+        type: 'object',
+        properties: {
+          ticket_key: { type: 'string', description: 'The Jira ticket key e.g. DEHGMA-123' },
+          comment: { type: 'string', description: 'The comment text to add to the ticket' },
+        },
+        required: ['ticket_key', 'comment'],
       }),
       execute: async ({ ticket_key, comment }) => {
         try {
@@ -265,13 +279,13 @@ export function createJiraTools(userEmail: string) {
 
     get_open_issues_by_reporter: tool({
       description: 'Get open Jira issues reported by a specific user email',
-      parameters: z.object({
-        email: z.string().describe('The reporter email address'),
-        max_results: z
-          .number()
-          .optional()
-          .default(20)
-          .describe('Maximum results to return (default 20)'),
+      parameters: jsonSchema<{ email: string; max_results?: number }>({
+        type: 'object',
+        properties: {
+          email: { type: 'string', description: 'The reporter email address' },
+          max_results: { type: 'number', default: 20, description: 'Maximum results to return (default 20)' },
+        },
+        required: ['email'],
       }),
       execute: async ({ email, max_results }) => {
         try {
@@ -310,13 +324,13 @@ export function createJiraTools(userEmail: string) {
     attach_file_to_ticket: tool({
       description:
         'Attach an uploaded file to a Jira ticket. Only call this if the user has uploaded a file in this message.',
-      parameters: z.object({
-        ticket_key: z
-          .string()
-          .describe('The Jira ticket key e.g. DEHGMA-123'),
-        filename: z
-          .string()
-          .describe('The name of the uploaded file to attach'),
+      parameters: jsonSchema<{ ticket_key: string; filename: string }>({
+        type: 'object',
+        properties: {
+          ticket_key: { type: 'string', description: 'The Jira ticket key e.g. DEHGMA-123' },
+          filename: { type: 'string', description: 'The name of the uploaded file to attach' },
+        },
+        required: ['ticket_key', 'filename'],
       }),
       execute: async ({ ticket_key, filename }) => {
         // File attachments require a separate multipart upload.
