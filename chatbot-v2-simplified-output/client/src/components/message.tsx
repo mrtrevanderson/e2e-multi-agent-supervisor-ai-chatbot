@@ -282,6 +282,20 @@ const PurePreviewMessage = ({
                 return null;
               }
 
+              // During streaming lastNamePartIndex hasn't reached its final value yet,
+              // so the hide condition above can miss text that immediately follows a name
+              // part (e.g. a data table). Catch it here: if we're still loading and the
+              // previous segment is a name part, suppress this segment until the stream
+              // is complete and the correct hide range is known.
+              const prevSegment = partSegments[index - 1];
+              if (
+                isLoading &&
+                prevSegment != null &&
+                isNamePart(prevSegment[0])
+              ) {
+                return null;
+              }
+
               if (mode === 'view') {
                 return (
                   <div key={key}>
