@@ -1,0 +1,12 @@
+command: ["npm", "run", "start"]
+runtime: nodejs20
+
+env:
+  - name: DATABRICKS_SERVING_ENDPOINT
+    valueFrom: serving-endpoint
+  - name: JIRA_BASE_URL
+    value: "https://innoceanusa.atlassian.net"
+  - name: JIRA_EMAIL
+    value: ""
+  - name: JIRA_API_TOKEN
+    value: ""
