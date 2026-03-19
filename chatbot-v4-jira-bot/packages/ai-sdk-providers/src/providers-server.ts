@@ -239,8 +239,6 @@ async function getOrCreateDatabricksProvider(): Promise<CachedProvider> {
 
   // Create provider with fetch that always uses fresh token
 const provider = createDatabricksProvider({
-  // When using endpoints such as Agent Bricks or custom agents, we need to use remote tool calling to handle the tool calls
-  useRemoteToolCalling: true,
   baseURL: `${hostname}/serving-endpoints`,
   formatUrl: ({ baseUrl, path }) => API_PROXY ?? `${baseUrl}${path}`,
   fetch: async (...[input, init]: Parameters<typeof fetch>) => {
