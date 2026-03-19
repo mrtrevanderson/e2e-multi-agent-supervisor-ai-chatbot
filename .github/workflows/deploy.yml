@@ -296,3 +296,100 @@ jobs:
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+  # ─────────────────────────────────────────────
+  # Deploy v4 (DEB – Data Engineering Bot / Jira)
+  # to dev on every push to main
+  # ─────────────────────────────────────────────
+  deploy-v4-dev:
+    name: Deploy v4 → dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chatbot-v4-jira-bot
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Deploy bundle
+        run: databricks bundle deploy --target dev
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+      - name: Start and deploy app
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot-v4/dev/files"
+          APP_NAME=$(databricks bundle validate --target dev --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "App: $APP_NAME | Source: $SOURCE_PATH"
+
+          # Start the app if stopped; suppress error if already running
+          databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
+
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
+          for i in $(seq 1 30); do
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
+            echo "  [$i/30] state=$STATE"
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
+            sleep 10
+          done
+
+          echo "Deploying source..."
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+  # ─────────────────────────────────────────────
+  # Deploy v4 to prod on tags like v4.0.0
+  # ─────────────────────────────────────────────
+  deploy-v4-prod:
+    name: Deploy v4 → prod
+    if: github.event_name == 'create' && startsWith(github.ref, 'refs/tags/v4.')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: chatbot-v4-jira-bot
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Deploy bundle
+        run: databricks bundle deploy --target prod
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+      - name: Start and deploy app
+        run: |
+          WORKSPACE_USER=$(databricks current-user me --output json | jq -r '.userName')
+          SOURCE_PATH="/Workspace/Users/${WORKSPACE_USER}/.bundle/databricks-chatbot-v4/prod/files"
+          APP_NAME=$(databricks bundle validate --target prod --output json | jq -r '.resources.apps.databricks_chatbot.name')
+          echo "App: $APP_NAME | Source: $SOURCE_PATH"
+
+          # Start the app if stopped; suppress error if already running
+          databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
+
+          # Wait up to 5 minutes for app to reach RUNNING state
+          echo "Waiting for app to reach RUNNING state..."
+          for i in $(seq 1 30); do
+            STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
+            echo "  [$i/30] state=$STATE"
+            [ "$STATE" = "RUNNING" ] && break
+            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
+            sleep 10
+          done
+
+          echo "Deploying source..."
+          databricks apps deploy "$APP_NAME" --source-code-path "$SOURCE_PATH"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
