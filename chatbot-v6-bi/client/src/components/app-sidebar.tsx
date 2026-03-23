@@ -43,6 +43,7 @@ export function AppSidebar({
                 alt="Nexus Logo"
                 className="h-8 w-auto cursor-pointer rounded-md px-1 hover:bg-muted"
               />
+              <span className="font-bold text-sm">Nexus V6</span>
             </Link>
             <Tooltip>
               <TooltipTrigger asChild>
