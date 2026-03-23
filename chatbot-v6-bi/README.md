@@ -1,5 +1,5 @@
 <a href="https://docs.databricks.com/aws/en/generative-ai/agent-framework/chat-app">
-  <h1 align="center">Databricks Agent Chat Template</h1>
+  <h1 align="center">Databricks Agent Chat Template< /h1>
 </a>
 
 <p align="center">
