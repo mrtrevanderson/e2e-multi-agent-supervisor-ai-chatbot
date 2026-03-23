@@ -448,16 +448,15 @@ jobs:
           echo "App: $APP_NAME | Source: $SOURCE_PATH"
 
           # Start the app if stopped; suppress error if already running
-          # (bundle deploy already configured the source path, so the app can start)
           databricks apps start "$APP_NAME" && echo "Start issued." || echo "App may already be running."
 
-          # Wait up to 5 minutes for app to reach RUNNING state
+          # Wait up to 15 minutes — first-time startup includes npm build
           echo "Waiting for app to reach RUNNING state..."
-          for i in $(seq 1 30); do
+          for i in $(seq 1 90); do
             STATE=$(databricks apps get "$APP_NAME" --output json | jq -r '.app_status.state // "UNKNOWN"')
-            echo "  [$i/30] state=$STATE"
+            echo "  [$i/90] state=$STATE"
             [ "$STATE" = "RUNNING" ] && break
-            [ $i -eq 30 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
+            [ $i -eq 90 ] && { echo "ERROR: Timed out waiting for RUNNING state."; exit 1; }
             sleep 10
           done
 
