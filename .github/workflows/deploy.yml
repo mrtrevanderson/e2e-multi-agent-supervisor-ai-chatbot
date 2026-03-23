@@ -430,17 +430,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build:client && npm run build:server
-
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
 
@@ -488,17 +477,6 @@ jobs:
         working-directory: chatbot-v6-bi
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build:client && npm run build:server
 
       - name: Install Databricks CLI
         uses: databricks/setup-cli@main
